@@ -1,22 +1,27 @@
-String[] lines;
+String[] lines; //<>//
 int count = 0;
 
 void setup() {
-  size(800,800);
-  lines = loadStrings("words.txt"); 
+  size(800, 800);
+  lines = loadStrings("words.txt");
 }
 
-void draw() { 
+void draw() {
   background(217);
   fill(0);
+  // her har jeg lige optimeret lidt
   String str = makeString();
-  boolean check = findWord(str);
-  println(check+"    "+str);
-  
-  if (check == true){
-    count++;
+
+  // jeg vil ikke spilde tid på korte ord. Derfor skal længden min være 3
+  if (str.length()>2) {
+    // jeg kan bruge funktionen direkte i min betingelse
+    // i stedet for at printe ikke-ord printer jeg kun rigtige ord ud.
+    if (findWord(str) == true) {
+      count++;
+      println(str);
+    }
   }
-  
+
   textSize(100);
   String countStr = nf(count);
   float widthStr = textWidth(countStr);
@@ -24,26 +29,31 @@ void draw() {
 }
 
 boolean findWord(String str) {
-  for (int i = 0; i < lines.length; i++) {
-    if (lines[i].equals(str)){
-    } else {
-      return false;
+  // sæt found til false for hvis den ikke bliver true kan den returneres direkte. Så behøver jeg ikke else
+  boolean found=false;
+  int i=0;
+  //for (int i = 0; i < lines.length; i++) {
+  // bliv ved til den er fundet eller at i > længden //<>//
+  while (!found && i <lines.length ) {
+    if (lines[i].equals(str)) {
+      found=true;
     }
+    i++;
   }
-  return true;
+  return found;
 }
 
 String makeString() {
-  int strLength = int(random(2,3));
+  int strLength = int(random(2, 3));
   String str = "";
-  for (int i = 0; i < (strLength+1); i++){
+  for (int i = 0; i < (strLength+1); i++) {
     char c = makeChar();
     if (i > 0) {
       if (byte(c) > 90) {
         str+=c;
-      }      
+      }
     } else {
-    str+=c;
+      str+=c;
     }
   }
   return str;
