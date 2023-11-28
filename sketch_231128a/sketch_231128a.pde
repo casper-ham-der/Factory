@@ -1,4 +1,5 @@
 String[] lines;
+int count = 0;
 
 void setup() {
   size(800,800);
@@ -6,7 +7,20 @@ void setup() {
 }
 
 void draw() { 
-  println(findWord(makeString()));
+  background(217);
+  fill(0);
+  String str = makeString();
+  boolean check = findWord(str);
+  println(check+"    "+str);
+  
+  if (check == true){
+    count++;
+  }
+  
+  textSize(100);
+  String countStr = nf(count);
+  float widthStr = textWidth(countStr);
+  text(countStr, width/2-widthStr/2, height/2);
 }
 
 boolean findWord(String str) {
@@ -20,7 +34,7 @@ boolean findWord(String str) {
 }
 
 String makeString() {
-  int strLength = int(random(2,52));
+  int strLength = int(random(2,3));
   String str = "";
   for (int i = 0; i < (strLength+1); i++){
     char c = makeChar();
