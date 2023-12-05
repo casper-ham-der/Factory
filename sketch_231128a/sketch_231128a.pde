@@ -1,9 +1,11 @@
 String[] lines; //<>//
 int count = 0;
+int highscore = 0;
 
 void setup() {
   size(800, 800);
   lines = loadStrings("words.txt");
+  loadHighscore();
 }
 
 void draw() {
@@ -26,6 +28,16 @@ void draw() {
   String countStr = nf(count);
   float widthStr = textWidth(countStr);
   text(countStr, width/2-widthStr/2, height/2);
+  
+  if (count > highscore) {
+    highscore = count;
+    saveHighscore();
+  }
+  
+  textSize(50);
+  String highscoreStr = nf(highscore);
+  float highWidthStr = textWidth(highscoreStr);
+  text(highscoreStr, width-highWidthStr, 50);
 }
 
 boolean findWord(String str) {
@@ -86,4 +98,16 @@ boolean bitMine() {
     return true;
   }
   return false;
+}
+
+void loadHighscore() {
+  String[] data = loadStrings("highscore.txt");
+  if (data.length > 0) {
+    highscore = int(data[0]);
+  }
+}
+
+void saveHighscore() {
+  String[] data = {str(highscore)};
+  saveStrings("highscore.txt", data);
 }
