@@ -1,11 +1,18 @@
 String[] lines; //<>//
 int count = 0;
 int highscore = 0;
+PImage miner, factory1, factory2, factory3, research;
+
 
 void setup() {
-  size(800, 800);
+  size(1000, 700);
   lines = loadStrings("words.txt");
   loadHighscore();
+  miner = loadImage("Unavngivet.png");
+  factory1 = loadImage("Factory.png");
+  factory2 = loadImage("Factory2.png");
+  factory3 = loadImage("Factory3.png");
+  research = loadImage("Research.png");
 }
 
 void draw() {
@@ -38,6 +45,17 @@ void draw() {
   String highscoreStr = nf(highscore);
   float highWidthStr = textWidth(highscoreStr);
   text(highscoreStr, width-highWidthStr, 50);
+  
+  miner.resize(200,200);
+  factory1.resize(170,170);
+  factory2.resize(170,170);
+  factory3.resize(170,170);
+  research.resize(200,200);
+  image(research, 50, 480);
+  image(factory3, 800, 500);
+  image(factory1, 400,0);
+  image(factory2, 800,30);
+  image(miner, 0, 0);
 }
 
 boolean findWord(String str) {
