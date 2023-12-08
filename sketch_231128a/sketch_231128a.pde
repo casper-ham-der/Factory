@@ -2,6 +2,11 @@ String[] lines; //<>//
 int count = 0;
 int highscore = 0;
 PImage miner, factory1, factory2, factory3, research;
+String test;
+float xpos = 120;
+float ypos = 150;
+float speed = 1;
+char state;
 
 
 void setup() {
@@ -18,13 +23,22 @@ void setup() {
 void draw() {
   background(217);
   fill(0);
-  // her har jeg lige optimeret lidt
+  
+  if (test == null){
+    state = 'm';
+    if (bitMine()){
+      test = "1";
+    } else {
+      test = "0";
+    }
+  } else {
+    textSize(50);
+    text(test, xpos, ypos);
+  }
+  
   String str = makeString();
 
-  // jeg vil ikke spilde tid på korte ord. Derfor skal længden min være 3
   if (str.length()>2) {
-    // jeg kan bruge funktionen direkte i min betingelse
-    // i stedet for at printe ikke-ord printer jeg kun rigtige ord ud.
     if (findWord(str) == true) {
       count++;
       println(str);
@@ -56,6 +70,10 @@ void draw() {
   image(factory1, 400,0);
   image(factory2, 800,30);
   image(miner, 0, 0);
+  
+  if (state == 'm' || state == 'b') {
+    xpos+=speed;
+  }
 }
 
 boolean findWord(String str) {
