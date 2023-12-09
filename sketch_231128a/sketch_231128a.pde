@@ -3,22 +3,22 @@ int count = 0;
 int highscore = 0;
 PImage miner, factory1, factory2, factory3, research;
 String test;
-StringList Mi;
-StringList MiBy;
-StringList By;
+StringList Mi = new StringList();
+StringList MiBy = new StringList();
+StringList By = new StringList();
+StringList Ch = new StringList();
+StringList ChSt = new StringList();
+FloatList xBy = new FloatList();
+FloatList yCh = new FloatList();
 float speed = 3.5;
 char state;
 int check1 = 0;
 int check2 = 0;
+int check3 = 0;
 boolean by = false;
-int interval = 0;
-
 
 void setup() {
   size(1000, 700);
-  Mi = new StringList();
-  MiBy = new StringList();
-  By = new StringList();
   lines = loadStrings("words.txt");
   loadHighscore();
   miner = loadImage("Unavngivet.png");
@@ -42,46 +42,64 @@ void draw() {
     Mi.append(String.valueOf(i));
     check1 = 0;
   }
-    check1++;
-  println(Mi);
-  
-  if (120+((Mi.size()-(0+1))*(30/speed)+check1)*speed >= 420){
+  check1++;
+
+  if (120+((Mi.size()-(0+1))*(30/speed)+check1)*speed >= 420) {
     MiBy.append(Mi.get(0));
     Mi.remove(0);
   }
-  if (MiBy.size() == 8){
+  if (MiBy.size() == 8) {
     by = true;
-    interval = check2;
-    println(MiBy);
-    byte b = makeByte(int(MiBy.get(0)),int(MiBy.get(1)),int(MiBy.get(2)),int(MiBy.get(3)),int(MiBy.get(4)),int(MiBy.get(5)),int(MiBy.get(6)),int(MiBy.get(7)));
+    byte b = makeByte(int(MiBy.get(0)), int(MiBy.get(1)), int(MiBy.get(2)), int(MiBy.get(3)), int(MiBy.get(4)), int(MiBy.get(5)), int(MiBy.get(6)), int(MiBy.get(7)));
     By.append(String.valueOf(b));
+    xBy.append(float(check3));
     MiBy = new StringList();
-    println(By);
-  } else if (by){
+  } else if (by) {
     check2++;
   }
-  
-  if (500+(check2-((31/speed)*8)*0)*speed >= 820){
-    check2-=(31/speed)*8;
-    By.remove(0);
+
+  if (xBy.size() > 0) {
+    if (500+(check3-xBy.get(0))*speed >= 820) {
+      char c = makeChar(byte(int(By.get(0))));
+      if (c != ' ') {
+        Ch.append(String.valueOf(c));
+        yCh.append(float(check3));
+        println(Ch);
+        println(yCh);
+      }
+      By.remove(0);
+      xBy.remove(0);
+    }
+  }
+
+  if (yCh.size() > 0) {
+    if (150+(check3-yCh.get(0))*speed >= 650) {
+      Ch.remove(0);
+      yCh.remove(0);
+      println(Ch);
+      println(yCh);
+    }
   }
 
   textSize(50);
   for (int i = 0; i<Mi.size(); i++) {
-    text(Mi.get(i),120+((Mi.size()-(i+1))*(30/speed)+check1)*speed,150);
+    text(Mi.get(i), 120+((Mi.size()-(i+1))*(30/speed)+check1)*speed, 150);
   }
   for (int i = 0; i<By.size(); i++) {
-    text(By.get(i),500+(check2-((31/speed)*8)*i)*speed,150);
+    text(By.get(i), 500+(check3-xBy.get(i))*speed, 150);
+  }
+  for (int i = 0; i<Ch.size(); i++) {
+    text(Ch.get(i), 840, 150+(check3-yCh.get(i))*speed);
   }
 
-  String str = makeString();
-
-  if (str.length()>2) {
-    if (findWord(str) == true) {
-      count++;
-      println(str);
-    }
-  }
+  /*String str = makeString();
+   
+   if (str.length()>2) {
+   if (findWord(str) == true) {
+   count++;
+   println(str);
+   }
+   } */
 
   textSize(100);
   String countStr = nf(count);
@@ -103,11 +121,13 @@ void draw() {
   factory2.resize(170, 170);
   factory3.resize(170, 170);
   research.resize(200, 200);
-  image(research, 50, 480);
+  image(research, 50, 500);
   image(factory3, 800, 500);
   image(factory1, 400, 0);
   image(factory2, 800, 30);
   image(miner, 0, 0);
+
+  check3++;
 }
 
 boolean findWord(String str) {
@@ -124,33 +144,30 @@ boolean findWord(String str) {
   }
   return found;
 }
-
+/*
 String makeString() {
-  int strLength = int(random(2, 3));
-  String str = "";
-  for (int i = 0; i < (strLength+1); i++) {
-    char c = makeChar();
-    if (i > 0) {
-      if (byte(c) > 90) {
-        str+=c;
-      }
-    } else {
-      str+=c;
-    }
-  }
-  return str;
-}
+ int strLength = int(random(2, 3));
+ String str = "";
+ for (int i = 0; i < (strLength+1); i++) {
+ char c = makeChar();
+ if (i > 0) {
+ if (byte(c) > 90) {
+ str+=c;
+ }
+ } else {
+ str+=c;
+ }
+ }
+ return str;
+ } */
 
-char makeChar() {
+char makeChar(byte b) {
   char c=' ';
-  //byte d;
-  //for (int i = 0; true; i++) {
-   // d = makeByte();
-   // if ((d > 64 && d < 91) || (d > 96 && d < 123)) {
-    //  c = char(d);
-      return c;
-  //  }
- // }
+  if ((b > 64 && b < 91) || (b > 96 && b < 123)) {
+    c = char(b);
+  }
+  println("c=  "+"'"+c+"'");
+  return c;
 }
 
 byte makeByte(int i1, int i2, int i3, int i4, int i5, int i6, int i7, int i8) {
