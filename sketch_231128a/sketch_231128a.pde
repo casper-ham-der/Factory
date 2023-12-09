@@ -18,9 +18,10 @@ int check1 = 0;
 int check2 = 0;
 int check3 = 0;
 boolean by = false;
+float xpos = 200;
 
 void setup() {
-  size(1000, 700);
+  size(1000, 800);
   lines = loadStrings("words.txt");
   loadHighscore();
   miner = loadImage("Unavngivet.png");
@@ -137,7 +138,17 @@ void draw() {
   image(factory1, 400, 0);
   image(factory2, 800, 30);
   image(miner, 0, 0);
-
+  
+  rect(200,747,600,5);
+  fill(65, 134, 244);
+  rect(xpos, 737, 10, 25);
+  
+  if (mousePressed && mouseX > 205 && mouseX < 795 && mouseY > 737 && mouseY < 737+25) {
+    xpos = mouseX-5;
+  }
+  
+  speed = (xpos - 205)/(795-205)*(50-3.5)+3.5;
+  println(speed);
   check3++;
 }
 
