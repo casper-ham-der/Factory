@@ -8,9 +8,11 @@ StringList MiBy = new StringList();
 StringList By = new StringList();
 StringList Ch = new StringList();
 StringList ChSt = new StringList();
+StringList St = new StringList();
 FloatList xBy = new FloatList();
 FloatList yCh = new FloatList();
-float speed = 3.5;
+FloatList xSt = new FloatList();
+float speed = 50;
 char state;
 int check1 = 0;
 int check2 = 0;
@@ -59,13 +61,11 @@ void draw() {
   }
 
   if (xBy.size() > 0) {
-    if (500+(check3-xBy.get(0))*speed >= 820) {
+    if (480+(check3-xBy.get(0))*(speed/2) >= 820) {
       char c = makeChar(byte(int(By.get(0))));
       if (c != ' ') {
         Ch.append(String.valueOf(c));
         yCh.append(float(check3));
-        println(Ch);
-        println(yCh);
       }
       By.remove(0);
       xBy.remove(0);
@@ -73,11 +73,27 @@ void draw() {
   }
 
   if (yCh.size() > 0) {
-    if (150+(check3-yCh.get(0))*speed >= 650) {
+    if (150+(check3-yCh.get(0))*(speed/2) >= 650) {
+      ChSt.append(Ch.get(0));
       Ch.remove(0);
       yCh.remove(0);
-      println(Ch);
-      println(yCh);
+    }
+  }
+  if (ChSt.size() == 3) {
+    St.append(makeString(ChSt.get(0), ChSt.get(1), ChSt.get(2)));
+    xSt.append(check3);
+    ChSt = new StringList();
+    println(St);
+  }
+  
+  if (xSt.size() > 0) {
+    if (840-(check3-xSt.get(0))*(speed/3)<= 100) {
+      if (findWord(St.get(0))){
+        count++;
+        println("Found a word!");
+      }
+      St.remove(0);
+      xSt.remove(0);
     }
   }
 
@@ -86,20 +102,15 @@ void draw() {
     text(Mi.get(i), 120+((Mi.size()-(i+1))*(30/speed)+check1)*speed, 150);
   }
   for (int i = 0; i<By.size(); i++) {
-    text(By.get(i), 500+(check3-xBy.get(i))*speed, 150);
+    text(By.get(i), 480+(check3-xBy.get(i))*(speed/2), 150);
   }
   for (int i = 0; i<Ch.size(); i++) {
-    text(Ch.get(i), 840, 150+(check3-yCh.get(i))*speed);
+    text(Ch.get(i), 840, 150+(check3-yCh.get(i))*(speed/2));
+  }
+  for (int i = 0; i<St.size(); i++) {
+    text(St.get(i), 840-(check3-xSt.get(i))*(speed/3), 640);
   }
 
-  /*String str = makeString();
-   
-   if (str.length()>2) {
-   if (findWord(str) == true) {
-   count++;
-   println(str);
-   }
-   } */
 
   textSize(100);
   String countStr = nf(count);
@@ -131,11 +142,8 @@ void draw() {
 }
 
 boolean findWord(String str) {
-  // sæt found til false for hvis den ikke bliver true kan den returneres direkte. Så behøver jeg ikke else
   boolean found=false;
   int i=0;
-  //for (int i = 0; i < lines.length; i++) {
-  // bliv ved til den er fundet eller at i > længden
   while (!found && i <lines.length ) {
     if (lines[i].equals(str)) {
       found=true;
@@ -144,29 +152,18 @@ boolean findWord(String str) {
   }
   return found;
 }
-/*
-String makeString() {
- int strLength = int(random(2, 3));
- String str = "";
- for (int i = 0; i < (strLength+1); i++) {
- char c = makeChar();
- if (i > 0) {
- if (byte(c) > 90) {
- str+=c;
- }
- } else {
- str+=c;
- }
- }
- return str;
- } */
+
+String makeString(String c1, String c2, String c3) {
+  String str="";
+  str+=c1+c2+c3;
+  return str;
+}
 
 char makeChar(byte b) {
   char c=' ';
   if ((b > 64 && b < 91) || (b > 96 && b < 123)) {
     c = char(b);
   }
-  println("c=  "+"'"+c+"'");
   return c;
 }
 
