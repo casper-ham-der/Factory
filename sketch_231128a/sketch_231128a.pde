@@ -1,5 +1,7 @@
 String[] lines; //<>// //<>//
 int count = 0;
+int fails = 0;
+int fails2 = 1;
 int highscore = 0;
 PImage miner, factory1, factory2, factory3, research;
 String test;
@@ -12,13 +14,15 @@ StringList St = new StringList();
 FloatList xBy = new FloatList();
 FloatList yCh = new FloatList();
 FloatList xSt = new FloatList();
-float speed = 50;
+float speed = 0;
 char state;
+float interval = 8;
 int check1 = 0;
 int check2 = 0;
 int check3 = 0;
 boolean by = false;
 float xpos = 200;
+boolean pressed = false;
 
 void setup() {
   size(1000, 800);
@@ -35,7 +39,7 @@ void draw() {
   background(217);
   fill(0);
 
-  if (check1 >= (30/speed)) {
+  if (check1 >= (interval/speed)) {
     int i;
     if (bitMine()) {
       i = 1;
@@ -47,7 +51,7 @@ void draw() {
   }
   check1++;
 
-  if (120+((Mi.size()-(0+1))*(30/speed)+check1)*speed >= 420) {
+  if (120+((Mi.size()-(0+1))*(interval/speed)+check1)*speed >= 420) {
     MiBy.append(Mi.get(0));
     Mi.remove(0);
   }
@@ -67,6 +71,12 @@ void draw() {
       if (c != ' ') {
         Ch.append(String.valueOf(c));
         yCh.append(float(check3));
+      } else {
+        if (fails2 == 3) {
+          fails++;
+          fails2 = 0;
+        }
+        fails2++;
       }
       By.remove(0);
       xBy.remove(0);
@@ -84,14 +94,16 @@ void draw() {
     St.append(makeString(ChSt.get(0), ChSt.get(1), ChSt.get(2)));
     xSt.append(check3);
     ChSt = new StringList();
-    println(St);
+    //println(St);
   }
-  
+
   if (xSt.size() > 0) {
     if (840-(check3-xSt.get(0))*(speed/3)<= 100) {
-      if (findWord(St.get(0))){
+      if (findWord(St.get(0))) {
         count++;
         println("Found a word!");
+      } else {
+        fails++;
       }
       St.remove(0);
       xSt.remove(0);
@@ -100,7 +112,7 @@ void draw() {
 
   textSize(50);
   for (int i = 0; i<Mi.size(); i++) {
-    text(Mi.get(i), 120+((Mi.size()-(i+1))*(30/speed)+check1)*speed, 150);
+    text(Mi.get(i), 120+((Mi.size()-(i+1))*(interval/speed)+check1)*speed, 150);
   }
   for (int i = 0; i<By.size(); i++) {
     text(By.get(i), 480+(check3-xBy.get(i))*(speed/2), 150);
@@ -113,10 +125,47 @@ void draw() {
   }
 
 
-  textSize(100);
-  String countStr = nf(count);
+  textSize(70);
+  String countStr = "Fundne ord: "+nf(count);
   float widthStr = textWidth(countStr);
-  text(countStr, width/2-widthStr/2, height/2);
+  text(countStr, width/2-widthStr/2, height/2-100);
+
+  textSize(60);
+  String failsStr = "Fejl: "+nf(fails);
+  float widthfails = textWidth(failsStr);
+  text(failsStr, width/2-widthfails/2, height/2);
+
+  if (fails > 0) {
+    float rate = (float(count)*100)/float(fails);
+    int lengths = 0;
+    for (int i = 0; i < nf(rate).length(); i++) {
+      if (nf(rate).charAt(i) == '.') {
+        lengths = i;
+        break;
+      }
+    }
+    boolean comma = false;
+    for (int i = 0; i < 3 && i+lengths+2 < nf(rate).length(); i++) {
+      if (int(nf(rate).charAt(i+lengths+2)) > 0) {
+        comma = true;
+        break;
+      }
+    }
+
+    if (comma) {
+      float widthSuccesrate = textWidth("Succesrate: "+nf(rate, lengths+1, 2)+"%");
+      text( "Succesrate: "+nf(rate, lengths, 2)+"%", width/2-widthSuccesrate/2, height/2+80);
+    } else {
+      float widthSuccesrate = textWidth("Succesrate: "+nf(rate, lengths+1, 0)+"%");
+      text( "Succesrate: "+nf(rate, lengths, 0)+"%", width/2-widthSuccesrate/2, height/2+80);
+    }
+    println(rate);
+  } else {
+    String succesrate = "Succesrate: "+nf(0)+"%";
+    float widthSuccesrate = textWidth(succesrate);
+    text( "Succesrate: "+nf(0)+"%", width/2-widthSuccesrate/2, height/2+80);
+  }
+
 
   if (count > highscore) {
     highscore = count;
@@ -128,6 +177,9 @@ void draw() {
   float highWidthStr = textWidth(highscoreStr);
   text(highscoreStr, width-highWidthStr, 50);
 
+  textSize(50);
+  text("Fart:", 80, 760);
+
   miner.resize(200, 200);
   factory1.resize(170, 170);
   factory2.resize(170, 170);
@@ -138,17 +190,29 @@ void draw() {
   image(factory1, 400, 0);
   image(factory2, 800, 30);
   image(miner, 0, 0);
-  
-  rect(200,747,600,5);
+
+  rect(200, 747, 600, 5);
   fill(65, 134, 244);
   rect(xpos, 737, 10, 25);
-  
-  if (mousePressed && mouseX > 205 && mouseX < 795 && mouseY > 737 && mouseY < 737+25) {
-    xpos = mouseX-5;
+
+  if (mousePressed) {
+    if (pressed) {
+      if (mouseX < 205) {
+        xpos = 200;
+      } else if (mouseX > 800) {
+        xpos = 795;
+      } else {
+        xpos = mouseX-5;
+      }
+    } else if (mouseX > 205 && mouseX < 800 && mouseY > 737 && mouseY < 737+25) {
+      xpos = mouseX-5;
+      pressed = true;
+    }
+  } else {
+    pressed = false;
   }
-  
+
   speed = (xpos - 205)/(795-205)*(50-3.5)+3.5;
-  println(speed);
   check3++;
 }
 
