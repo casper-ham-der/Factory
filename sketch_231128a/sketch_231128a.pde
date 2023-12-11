@@ -14,15 +14,19 @@ StringList St = new StringList();
 FloatList xBy = new FloatList();
 FloatList yCh = new FloatList();
 FloatList xSt = new FloatList();
+FloatList grafy = new FloatList();
+FloatList grafx = new FloatList();
 float speed = 0;
 char state;
 float interval = 8;
 int check1 = 0;
 int check2 = 0;
-int check3 = 0;
 boolean by = false;
 float xpos = 200;
 boolean pressed = false;
+boolean presseds = false;
+boolean main = true;
+int overcount = 0;
 
 void setup() {
   size(1000, 800);
@@ -33,6 +37,7 @@ void setup() {
   factory2 = loadImage("Factory2.png");
   factory3 = loadImage("Factory3.png");
   research = loadImage("Research.png");
+  frameRate(120);
 }
 
 void draw() {
@@ -59,18 +64,18 @@ void draw() {
     by = true;
     byte b = makeByte(int(MiBy.get(0)), int(MiBy.get(1)), int(MiBy.get(2)), int(MiBy.get(3)), int(MiBy.get(4)), int(MiBy.get(5)), int(MiBy.get(6)), int(MiBy.get(7)));
     By.append(String.valueOf(b));
-    xBy.append(float(check3));
+    xBy.append(480);
     MiBy = new StringList();
   } else if (by) {
     check2++;
   }
 
   if (xBy.size() > 0) {
-    if (480+(check3-xBy.get(0))*(speed/2) >= 820) {
+    if (xBy.get(0) >= 820) {
       char c = makeChar(byte(int(By.get(0))));
       if (c != ' ') {
         Ch.append(String.valueOf(c));
-        yCh.append(float(check3));
+        yCh.append(150);
       } else {
         if (fails2 == 3) {
           fails++;
@@ -84,7 +89,7 @@ void draw() {
   }
 
   if (yCh.size() > 0) {
-    if (150+(check3-yCh.get(0))*(speed/2) >= 650) {
+    if (yCh.get(0) >= 650) {
       ChSt.append(Ch.get(0));
       Ch.remove(0);
       yCh.remove(0);
@@ -92,16 +97,14 @@ void draw() {
   }
   if (ChSt.size() == 3) {
     St.append(makeString(ChSt.get(0), ChSt.get(1), ChSt.get(2)));
-    xSt.append(check3);
+    xSt.append(840);
     ChSt = new StringList();
-    //println(St);
   }
 
   if (xSt.size() > 0) {
-    if (840-(check3-xSt.get(0))*(speed/3)<= 100) {
+    if (xSt.get(0)<= 100) {
       if (findWord(St.get(0))) {
         count++;
-        println("Found a word!");
       } else {
         fails++;
       }
@@ -110,87 +113,111 @@ void draw() {
     }
   }
 
-  textSize(50);
-  for (int i = 0; i<Mi.size(); i++) {
-    text(Mi.get(i), 120+((Mi.size()-(i+1))*(interval/speed)+check1)*speed, 150);
-  }
-  for (int i = 0; i<By.size(); i++) {
-    text(By.get(i), 480+(check3-xBy.get(i))*(speed/2), 150);
-  }
-  for (int i = 0; i<Ch.size(); i++) {
-    text(Ch.get(i), 840, 150+(check3-yCh.get(i))*(speed/2));
-  }
-  for (int i = 0; i<St.size(); i++) {
-    text(St.get(i), 840-(check3-xSt.get(i))*(speed/3), 640);
-  }
-
-
-  textSize(70);
-  String countStr = "Fundne ord: "+nf(count);
-  float widthStr = textWidth(countStr);
-  text(countStr, width/2-widthStr/2, height/2-100);
-
-  textSize(60);
-  String failsStr = "Fejl: "+nf(fails);
-  float widthfails = textWidth(failsStr);
-  text(failsStr, width/2-widthfails/2, height/2);
-
-  if (fails > 0) {
-    float rate = (float(count)*100)/float(fails);
-    int lengths = 0;
-    for (int i = 0; i < nf(rate).length(); i++) {
-      if (nf(rate).charAt(i) == '.') {
-        lengths = i;
-        break;
-      }
+  if (main) {
+    textSize(50);
+    for (int i = 0; i<Mi.size(); i++) {
+      text(Mi.get(i), 120+((Mi.size()-(i+1))*(interval/speed)+check1)*speed, 150);
     }
-    boolean comma = false;
-    for (int i = 0; i < 3 && i+lengths+2 < nf(rate).length(); i++) {
-      if (int(nf(rate).charAt(i+lengths+2)) > 0) {
-        comma = true;
-        break;
-      }
+    for (int i = 0; i<By.size(); i++) {
+      text(By.get(i), xBy.get(i), 150);
+    }
+    for (int i = 0; i<Ch.size(); i++) {
+      text(Ch.get(i), 840, yCh.get(i));
+    }
+    for (int i = 0; i<St.size(); i++) {
+      text(St.get(i), xSt.get(i), 640);
     }
 
-    if (comma) {
-      float widthSuccesrate = textWidth("Succesrate: "+nf(rate, lengths+1, 2)+"%");
-      text( "Succesrate: "+nf(rate, lengths, 2)+"%", width/2-widthSuccesrate/2, height/2+80);
+
+    textSize(70);
+    String countStr = "Fundne ord: "+nf(count);
+    float widthStr = textWidth(countStr);
+    text(countStr, width/2-widthStr/2, height/2-100);
+
+    textSize(60);
+    String failsStr = "Fejl: "+nf(fails);
+    float widthfails = textWidth(failsStr);
+    text(failsStr, width/2-widthfails/2, height/2);
+
+
+    if (fails > 0) {
+      float rate = (float(count)*100)/float(fails);
+      int lengths = 0;
+      for (int i = 0; i < nf(rate).length(); i++) {
+        if (nf(rate).charAt(i) == '.') {
+          lengths = i;
+          break;
+        }
+      }
+      boolean comma = false;
+      for (int i = 0; i < 3 && i+lengths+2 < nf(rate).length(); i++) {
+        if (int(nf(rate).charAt(i+lengths+2)) > 0) {
+          comma = true;
+          break;
+        }
+      }
+
+      if (comma) {
+        float widthSuccesrate = textWidth("Succesrate: "+nf(rate, lengths+1, 2)+"%");
+        text( "Succesrate: "+nf(rate, lengths, 2)+"%", width/2-widthSuccesrate/2, height/2+80);
+      } else {
+        float widthSuccesrate = textWidth("Succesrate: "+nf(rate, lengths+1, 0)+"%");
+        text( "Succesrate: "+nf(rate, lengths, 0)+"%", width/2-widthSuccesrate/2, height/2+80);
+      }
     } else {
-      float widthSuccesrate = textWidth("Succesrate: "+nf(rate, lengths+1, 0)+"%");
-      text( "Succesrate: "+nf(rate, lengths, 0)+"%", width/2-widthSuccesrate/2, height/2+80);
+      String succesrate = "Succesrate: "+nf(0)+"%";
+      float widthSuccesrate = textWidth(succesrate);
+      text( "Succesrate: "+nf(0)+"%", width/2-widthSuccesrate/2, height/2+80);
     }
-    println(rate);
+
+
+    if (count > highscore) {
+      highscore = count;
+      saveHighscore();
+    }
+
+    textSize(50);
+    String highscoreStr = nf(highscore);
+    float highWidthStr = textWidth(highscoreStr);
+    text(highscoreStr, width-highWidthStr, 50);
+
+    textSize(50);
+    text("Fart:", 80, 760);
+
+    miner.resize(200, 200);
+    factory1.resize(170, 170);
+    factory2.resize(170, 170);
+    factory3.resize(170, 170);
+    research.resize(200, 200);
+    image(research, 50, 500);
+    image(factory3, 800, 500);
+    image(factory1, 400, 0);
+    image(factory2, 800, 30);
+    image(miner, 0, 0);
+
+    text("Graf", 850, 760);
   } else {
-    String succesrate = "Succesrate: "+nf(0)+"%";
-    float widthSuccesrate = textWidth(succesrate);
-    text( "Succesrate: "+nf(0)+"%", width/2-widthSuccesrate/2, height/2+80);
+    
+    stroke(255,0,0);
+    strokeWeight(5);
+    
+    for (int i = 0; i < grafx.size()-1; i++) {
+      line(grafx.get(i), grafy.get(i), grafx.get(i+1), grafy.get(i+1));
+    }
+    
+    stroke(0);
+    strokeWeight(1);
+    
+    text("Fabrik", 830, 760);
   }
-
-
-  if (count > highscore) {
-    highscore = count;
-    saveHighscore();
-  }
-
-  textSize(50);
-  String highscoreStr = nf(highscore);
-  float highWidthStr = textWidth(highscoreStr);
-  text(highscoreStr, width-highWidthStr, 50);
 
   textSize(50);
   text("Fart:", 80, 760);
 
-  miner.resize(200, 200);
-  factory1.resize(170, 170);
-  factory2.resize(170, 170);
-  factory3.resize(170, 170);
-  research.resize(200, 200);
-  image(research, 50, 500);
-  image(factory3, 800, 500);
-  image(factory1, 400, 0);
-  image(factory2, 800, 30);
-  image(miner, 0, 0);
+  noFill();
+  rect(820, 710, 150, 70);
 
+  fill(0);
   rect(200, 747, 600, 5);
   fill(65, 134, 244);
   rect(xpos, 737, 10, 25);
@@ -207,13 +234,41 @@ void draw() {
     } else if (mouseX > 205 && mouseX < 800 && mouseY > 737 && mouseY < 737+25) {
       xpos = mouseX-5;
       pressed = true;
+      presseds = true;
+    }
+    if (presseds == false) {
+      if (mouseX > 820 && mouseX < 970 && mouseY > 710 && mouseY < 780) {
+        presseds = true;
+        pressed = true;
+        if (main) {
+          main = false;
+        } else {
+          main = true;
+        }
+      }
     }
   } else {
     pressed = false;
+    presseds = false;
   }
 
   speed = (xpos - 205)/(795-205)*(50-3.5)+3.5;
-  check3++;
+
+  for (int i = 0; i < xBy.size(); i++) {
+    xBy.add(i, speed/2);
+  }
+  for (int i = 0; i < yCh.size(); i++) {
+    yCh.add(i, speed/2);
+  }
+  for (int i = 0; i < xSt.size(); i++) {
+    xSt.add(i, -speed/3);
+  }
+
+  if (fails > 0) {
+    overcount++;
+    grafx.append(overcount/60+50);
+    grafy.append(height - (count*10000)/fails - 200);
+  }
 }
 
 boolean findWord(String str) {
