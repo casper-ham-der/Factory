@@ -197,17 +197,17 @@ void draw() {
 
     text("Graf", 850, 760);
   } else {
-    
-    stroke(255,0,0);
+
+    stroke(255, 0, 0);
     strokeWeight(5);
-    
+
     for (int i = 0; i < grafx.size()-1; i++) {
-      line(grafx.get(i), grafy.get(i), grafx.get(i+1), grafy.get(i+1));
+      line(grafx.get(i)+50, grafy.get(i), grafx.get(i+1)+50, grafy.get(i+1));
     }
-    
+
     stroke(0);
     strokeWeight(1);
-    
+
     text("Fabrik", 830, 760);
   }
 
@@ -239,7 +239,6 @@ void draw() {
     if (presseds == false) {
       if (mouseX > 820 && mouseX < 970 && mouseY > 710 && mouseY < 780) {
         presseds = true;
-        pressed = true;
         if (main) {
           main = false;
         } else {
@@ -265,9 +264,9 @@ void draw() {
   }
 
   if (fails > 0) {
+    grafx.append(overcount/60);
     overcount++;
-    grafx.append(overcount/60+50);
-    grafy.append(height - (count*10000)/fails - 200);
+    grafy.append(height - (count*10000)/fails - 150);
   }
 }
 
