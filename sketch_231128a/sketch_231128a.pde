@@ -1,4 +1,13 @@
-String[] lines; //<>// //<>//
+/* //<>//
+Det er ret vildt hvad du har lavet!!
+4 ting! 
+1) Du skal gøre din kode mere genetisk. Med det mener jeg at dine funktioner skal kunne bruges i flere tilfælde. Mange af dine funktioner motager en lang række af parameter. fx c1,c2,c3 etc. Det gør at funktionen kun kan bruges i et spcifikt tilfælde. Brug et loop og lav en funktion som kun modtager én parameter. Så er det lettere at genbruge.  
+2) Der mangler kommentarer i din kode! Forklar for læseren hvad du gør.
+3) Ungå for mange globale variabler (det kan være svært) bliver lettere når vi lærer at lave det OOP
+4) Tommelfinger regl for hvor mange linjer som er i en funktion er 7 !! Kommer man over det skal man overveje at lave en ny funktion.
+*/
+
+String[] lines;
 int count = 0;
 int fails = 0;
 int fails2 = 1;
@@ -282,12 +291,15 @@ boolean findWord(String str) {
   return found;
 }
 
+// c1 c2 c3 gør det svært at læse! 
 String makeString(String c1, String c2, String c3) {
   String str="";
   str+=c1+c2+c3;
   return str;
 }
 
+
+// den burde ikke hedde makeChar. testChar() eller checkChar() ??? for den tester om char er inden for ascii værdierne 
 char makeChar(byte b) {
   char c=' ';
   if ((b > 64 && b < 91) || (b > 96 && b < 123)) {
@@ -296,17 +308,32 @@ char makeChar(byte b) {
   return c;
 }
 
+
+// der er rigtig mange parameter til din funktion og variabel navne med et bogstav gør det svært at læse. Brug en løkke i stedet!
 byte makeByte(int i1, int i2, int i3, int i4, int i5, int i6, int i7, int i8) {
   byte b = 0;
   b+=pow(2, 0)*i1+pow(2, 1)*i2+pow(2, 2)*i3+pow(2, 3)*i4+pow(2, 4)*i5+pow(2, 5)*i6+pow(2, 6)*i7+pow(2, 7)*i8;
   return b;
+  /* og så kan du bruge i som eksponent.
+  for (int i=8;i>0;i--){
+    if(bitMine()){
+      b+=pow(2, i);
+    }
+  }
+  */
+  
+  
 }
 
 boolean bitMine() {
+  /*
   if (random(0, 2)>1) {
     return true;
   }
   return false;
+  */
+  // kig lige på det her: 
+  return (random(0, 2)>1);
 }
 
 void loadHighscore() {
